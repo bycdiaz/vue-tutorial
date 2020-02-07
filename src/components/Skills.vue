@@ -1,13 +1,18 @@
 <template>
   <div class="hello">
     <div class="holder">
+      <form @submit.prevent="addSkill">
+        <input type="text" placeholder="Enter a skill you have.." v-model="skill" v-validate="'min:5'" name="skill">
+        <p class="alert" v-if="errors.has('skill')">{{ errors.first('skill') }}</p>
+      </form>
+
       <ul>
-        <li v-for="(data, index) in skills" :key='index'>{{ index + 1 }}. {{ data.skill }}</li>
+        <li v-for="(data, index) in skills" :key='index'>{{ data.skill }}</li>
       </ul>
 
-      <div v-bind:class="alertObject"></div>
+      <p>These are the skills that you possess.</p>
     </div>
-  </div>
+  </div> 
 </template>
 
 <script>
@@ -15,29 +20,78 @@ export default {
   name: 'Skills',
   data() {
     return {
+
+      skill: '',
       skills: [
         { 'skill': 'Vue.js'},
         { 'skill': 'Frontend Developer'},
         { 'skill': 'JavaScript'},
         { 'skill': 'Ruby'},
       ],
-      alertObject: {
-        alert: true,
-        anotherClass: true,
-      }
     }
-  }
+  },
+  methods : {
+    addSkill() {
+      this.$validator.validateAll().then((result) => {
+        if (result) {
+          this.skills.push({skill: this.skill});
+          this.skill = '';
+        } else {
+          console.log('Not valid');
+        }
+      })
+    }
+  },
+  
 }
 </script>
 
 <style scoped>
-  .alert {
-    background-color: yellow;
-    width: 100%;
-    height: 30px;
+
+  .holder {
+    background: #fff;
   }
 
-  .anotherClass {
-    border: 5px solid black;
-  }  
+  ul {
+    margin: 0;
+    padding: 0;
+    list-style-type: none;
+  }
+  
+  ul li {
+    padding: 20px;
+    font-size: 1.3em;
+    background-color: #E0EDF4;
+    border-left: 5px solid #3EB3F6;
+    margin-bottom: 2px;
+    color: #3E5252;
+  }
+
+  p {
+    text-align:center;
+    padding: 30px 0;
+    color: gray;
+  }
+
+  .container {
+    box-shadow: 0px 0px 40px lightgray;
+  }
+
+  input {
+  width: calc(100% - 40px);
+  border: 0;
+  padding: 20px;
+  font-size: 1.3em;
+  background-color: #323333;
+  color: #687F7F;
+  }
+
+  .alert {
+    background: #fdf2ce;
+    font-weight: bold;
+    display: inline-block;
+    padding: 5px;
+    margin-top: -20px;
+  }
+
 </style>
