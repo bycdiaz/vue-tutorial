@@ -2,17 +2,25 @@
   <div class="hello">
     <div class="holder">
       <form @submit.prevent="addSkill">
-        <input type="text" placeholder="Enter a skill you have.." v-model="skill" v-validate="'min:5'" name="skill">
-        <p class="alert" v-if="errors.has('skill')">{{ errors.first('skill') }}</p>
+        <input type="text" placeholder="Enter a skill you have.." v-model="skill" v-validate="'min:4'" name="skill">
+        
+        <transition name="alert-in" enter-active-class="animated flipInX" leave-active-class="animated flipOutX">
+          <p class="alert" v-if="errors.has('skill')">{{ errors.first('skill') }}</p>
+        </transition>
       </form>
 
       <ul>
-        <li v-for="(data, index) in skills" :key='index'>{{ data.skill }}</li>
+        <transition-group name="list" enter-active-class="animated bounceInUp" leave-active-class="animated bounceOutDown">
+          <li v-for="(data) in skills" :key='data'>
+            {{data.skill}}
+            <i class="fa fa-minus-circle" v-on:click="remove(index)"></i>
+          </li>
+        </transition-group>
       </ul>
 
       <p>These are the skills that you possess.</p>
     </div>
-  </div> 
+  </div>
 </template>
 
 <script>
@@ -24,7 +32,6 @@ export default {
       skill: '',
       skills: [
         { 'skill': 'Vue.js'},
-        { 'skill': 'Frontend Developer'},
         { 'skill': 'JavaScript'},
         { 'skill': 'Ruby'},
       ],
@@ -40,13 +47,18 @@ export default {
           console.log('Not valid');
         }
       })
+    },
+    remove(id) {
+      this.skills.splice(id, 1);
     }
   },
-  
 }
 </script>
 
 <style scoped>
+@import "https://maxcdn.bootstrapcdn.com/font-awesome/4.7.0/css/font-awesome.min.css";
+@import "https://cdn.jsdelivr.net/npm/animate.css@3.5.1";
+
 
   .holder {
     background: #fff;
@@ -92,6 +104,32 @@ export default {
     display: inline-block;
     padding: 5px;
     margin-top: -20px;
+  }
+
+  .fa.fa-minus-circle {
+    float: right;
+  }
+
+  .alert-in-enter-active {
+    animation: bounce-in .5s;
+  }
+
+  .alert-in-leave-active {
+    animation: bounce-in .5s reverse;
+  }
+
+  @keyframes bounce-in {
+    0% {
+      transform: scale(0);
+    }
+
+    50% {
+      transform: scale(1.2);
+    }
+
+    100% {
+      transform: scale(1);
+    }
   }
 
 </style>
